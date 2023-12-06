@@ -207,3 +207,15 @@ CatalogItem * ItemList::find(int catalogCode) const {
     }
     return nullptr;
 }
+
+// Copy constructor for deep copy
+ItemList::ItemList(const ItemList &other) {
+    head = nullptr;
+    CatalogItem *temp = other.head;
+    while (temp != nullptr) {
+        // Use the CatalogItem copy constructor to create a deep copy of each node
+        CatalogItem *newItem = new CatalogItem(*temp);
+        addItem(newItem); // addItem will handle the correct placement in the list
+        temp = temp->getNext();
+    }
+}

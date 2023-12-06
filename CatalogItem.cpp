@@ -33,7 +33,8 @@ CatalogItem::CatalogItem(const CatalogItem& other)
     : code(other.code), description(other.description), numPieces(other.numPieces),
       wholesalePrice(other.wholesalePrice), markup(other.markup), numItems(other.numItems),
       next(nullptr) {
-    cout << "Copy Constructor called for CatalogItem" << endl;
+    cout << "via copy constructor, creating CatalogItem with code ="<<code<< endl;
+
 }
 CatalogItem::~CatalogItem() {
     cout << "Destructor called for CatalogItem" << endl;

@@ -23,6 +23,7 @@ public:
 	void showInventory() const;
 	bool deleteItem(const int catalogCode);
 	CatalogItem * find(int catalogCode) const;
+	ItemList(const ItemList &other);
 
 
 private:
