@@ -3,7 +3,9 @@
 #include "ItemList.h"
 using namespace std;
 
-
+ItemList::ItemList(const ItemList &other) : head(nullptr) {
+    *this = other;  // Use assignment operator for deep copy
+}
 //setters
 void ItemList::setHead(CatalogItem * newHead){
 	head = newHead;
@@ -208,14 +210,82 @@ CatalogItem * ItemList::find(int catalogCode) const {
     return nullptr;
 }
 
-// Copy constructor for deep copy
-ItemList::ItemList(const ItemList &other) {
-    head = nullptr;
-    CatalogItem *temp = other.head;
-    while (temp != nullptr) {
-        // Use the CatalogItem copy constructor to create a deep copy of each node
-        CatalogItem *newItem = new CatalogItem(*temp);
-        addItem(newItem); // addItem will handle the correct placement in the list
-        temp = temp->getNext();
+//d
+
+
+
+ItemList &ItemList::operator=(const ItemList &other) {
+    if (this != &other) {  // Check for self-assignment
+        // Release existing resources
+        while (deleteItem(head ? head->getCode() : 0));
+
+        // Deep copy from other to this
+        CatalogItem *temp = other.getHead();
+        while (temp) {
+            this->addItem(new CatalogItem(*temp));  // Assuming CatalogItem has a copy constructor
+            temp = temp->getNext();
+        }
     }
+    return *this;  // Return reference to current object
+}
+
+//e
+
+// In ItemList.cpp
+
+bool ItemList::operator==(const ItemList &other) const {
+    CatalogItem *leftPtr = this->head;
+    CatalogItem *rightPtr = other.head;
+
+    while (leftPtr != nullptr && rightPtr != nullptr) {
+        if (!(*leftPtr == *rightPtr)) { // Assuming CatalogItem has an operator== defined
+            return false;
+        }
+        leftPtr = leftPtr->getNext();
+        rightPtr = rightPtr->getNext();
+    }
+
+    // Both lists should be null at the end if they are equal
+    return leftPtr == nullptr && rightPtr == nullptr;
+}
+
+// bool ItemList::operator==(const ItemList &other) const {
+//     CatalogItem *current = this->head;
+//     CatalogItem *otherCurrent = other.head;
+
+//     while (current != nullptr && otherCurrent != nullptr) {
+//         if (!(*current == *otherCurrent)) {
+//             // If any pair of corresponding items are not equal, return false
+//             return false;
+//         }
+//         // Move to the next item in both lists
+//         current = current->getNext();
+//         otherCurrent = otherCurrent->getNext();
+//     }
+
+//     // Check if both lists have reached their end, indicating equal length
+//     return current == nullptr && otherCurrent == nullptr;
+// }
+
+//f
+ItemList::~ItemList() {
+    CatalogItem *lead = head;  // Leading pointer starts at the head
+    CatalogItem *trail;        // Trailing pointer
+
+    while (lead != nullptr) {
+        trail = lead;          // Trail points to the current node
+        lead = lead->getNext();  // Advance lead to the next node
+        delete trail;           // Delete the current node
+    }
+}
+
+
+// Overloaded stream insertion operator
+std::ostream& operator<<(std::ostream& os, const ItemList& list) {
+    // Iterate through the linked list
+    for (CatalogItem* temp = list.getHead(); temp != nullptr; temp = temp->getNext()) {
+        // Use the overloaded << operator for CatalogItem
+        os << *temp << std::endl; // Assuming each CatalogItem ends with a newline for readability
+    }
+    return os;
 }
